@@ -1,23 +1,24 @@
 package com.example.speedoTransfer.Util;
 
+import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
-import org.springframework.boot.autoconfigure.security.oauth2.resource.OAuth2ResourceServerProperties;
+import io.jsonwebtoken.io.Decoders;
+import io.jsonwebtoken.security.Keys;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.stereotype.Component;
-import io.jsonwebtoken.Claims;
+import org.springframework.stereotype.Service;
 
-import java.io.Serializable;
+import java.security.Key;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
 
-@Component
-public class JwtTokenUtil implements Serializable {
+@Service
+public class JwtTokenUtil {
 
     public static final long TokenValidity = 5 * 60 * 60;
-    private final String SigningKey = "secret";
+    private static final String SECRET_KEY = "DvdhCDtTBdY6TZCK45DquX66VC3Zw6Mh4Z42CUfY8JR14Bmf3e9xphvXmHHznuSg";
     public String getUsernameFromToken(String token)
     {
         return getClaimFromToken(token , Claims::getSubject);
@@ -35,16 +36,20 @@ public class JwtTokenUtil implements Serializable {
 
     private Claims getAllClaimsFromToken(String token) {
 
-        return Jwts.parser()
-                .setSigningKey(SigningKey)
+        return  Jwts.parser()
+                .setSigningKey(getSignInKey())//sign in key used to create signature part of jwt
                 .parseClaimsJws(token)
                 .getBody();
     }
 
-    private String generateToken(UserDetails userDetails)
+    private Key getSignInKey() {
+        byte[] keyBytes = Decoders.BASE64.decode(SECRET_KEY);
+        return Keys.hmacShaKeyFor(keyBytes);
+    }
+
+    public String generateToken(UserDetails userDetails)
     {
-        Map<String,Object> claims = new HashMap<>();
-        return GenerateToken(claims,userDetails.getUsername());
+        return GenerateToken(new HashMap<>(),userDetails.getUsername());
     }
 
     private Boolean isTokenExpired(String token) {
@@ -52,13 +57,14 @@ public class JwtTokenUtil implements Serializable {
         return expiration.before(new Date());
     }
 
-    private String GenerateToken(Map<String, Object> claims, String username) {
+    private String GenerateToken(Map<String, Object> claims,
+                                 String username) {
         return Jwts.builder()
-                .setClaims(claims) //add ccustom claims
+                .setClaims(claims) //add custom claims
                 .setSubject(username) //for whom the token is issued
                 .setIssuedAt(new Date(System.currentTimeMillis()))
                 .setExpiration(new Date(System.currentTimeMillis() + TokenValidity * 1000)) //because it converted to milliseconds
-                .signWith(SignatureAlgorithm.HS512,SigningKey) //hash with 512bit key
+                .signWith(SignatureAlgorithm.HS256, getSignInKey()) //hash with 512bit key
                 .compact();
     }
 
