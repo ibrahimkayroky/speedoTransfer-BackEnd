@@ -1,4 +1,4 @@
-package com.example.speedoTransfer.Exception;
+package com.example.speedoTransfer.exception;
 
 public class UserAlreadyExistsException extends RuntimeException{
     public UserAlreadyExistsException(String message)

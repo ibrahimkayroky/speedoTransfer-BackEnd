@@ -1,9 +1,10 @@
-package com.example.speedoTransfer.Auth;
+package com.example.speedoTransfer.auth;
 
-import com.example.speedoTransfer.Enum.Role;
-import com.example.speedoTransfer.Model.User;
-import com.example.speedoTransfer.Repository.UserRepository;
-import com.example.speedoTransfer.Util.JwtTokenUtil;
+import com.example.speedoTransfer.enumeration.Country;
+import com.example.speedoTransfer.enumeration.Role;
+import com.example.speedoTransfer.model.User;
+import com.example.speedoTransfer.repository.UserRepository;
+import com.example.speedoTransfer.util.JwtTokenUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -28,8 +29,10 @@ public class AuthenticationService {
                 .email(request.getEmail())
                 .password(passwordEncoder.encode(request.getPassword()))
                 .role(Role.USER)
+                .country(String.valueOf(Country.EGYPT))
                 .build();
         repository.save(user);
+
         var jwtToken = jwtTokenUtil.generateToken(user);
         return AuthenticationResponse
                 .builder()

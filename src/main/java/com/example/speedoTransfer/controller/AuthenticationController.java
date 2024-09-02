@@ -1,9 +1,9 @@
-package com.example.speedoTransfer.Controller;
+package com.example.speedoTransfer.controller;
 
-import com.example.speedoTransfer.Auth.AuthenticationRequest;
-import com.example.speedoTransfer.Auth.AuthenticationResponse;
-import com.example.speedoTransfer.Auth.AuthenticationService;
-import com.example.speedoTransfer.Auth.RegisterRequest;
+import com.example.speedoTransfer.auth.AuthenticationRequest;
+import com.example.speedoTransfer.auth.AuthenticationResponse;
+import com.example.speedoTransfer.auth.AuthenticationService;
+import com.example.speedoTransfer.auth.RegisterRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -18,6 +18,10 @@ public class AuthenticationController {
 
     private final AuthenticationService service;
 
+    @PostMapping("/test")
+    public ResponseEntity<String> testEndpoint() {
+        return ResponseEntity.ok("Test endpoint hit successfully!");
+    }
     @PostMapping("/register")
     public ResponseEntity<AuthenticationResponse> register(
             @RequestBody RegisterRequest request

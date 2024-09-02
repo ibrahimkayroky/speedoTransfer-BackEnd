@@ -1,6 +1,6 @@
-package com.example.speedoTransfer.Model;
+package com.example.speedoTransfer.model;
 
-import com.example.speedoTransfer.Enum.Role;
+import com.example.speedoTransfer.enumeration.Role;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -18,7 +18,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name = "user")
+@Table(name = "users")
 public class User implements UserDetails {
 
     @Id

@@ -1,4 +1,4 @@
-package com.example.speedoTransfer.Util;
+package com.example.speedoTransfer.util;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;

@@ -1,4 +1,4 @@
-package com.example.speedoTransfer.Auth;
+package com.example.speedoTransfer.auth;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -9,9 +9,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class RegisterRequest {
-    private String name;
+public class AuthenticationRequest {
     private String email;
-    private String password;
-
+    String password;
 }

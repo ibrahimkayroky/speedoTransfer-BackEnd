@@ -1,6 +1,7 @@
-package com.example.speedoTransfer.DTO;
+package com.example.speedoTransfer.dto;
 
 import java.io.Serializable;
+
 
 public class JwtResponse implements Serializable {
 

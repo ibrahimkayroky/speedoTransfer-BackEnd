@@ -1,6 +1,6 @@
-package com.example.speedoTransfer.Repository;
+package com.example.speedoTransfer.repository;
 
-import com.example.speedoTransfer.Model.User;
+import com.example.speedoTransfer.model.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;
