@@ -29,6 +29,7 @@ public class AuthenticationService {
                 .email(request.getEmail())
                 .password(passwordEncoder.encode(request.getPassword()))
                 .role(Role.USER)
+                .birthDate(request.getBirthDate())
                 .country(String.valueOf(Country.EGYPT))
                 .build();
         repository.save(user);

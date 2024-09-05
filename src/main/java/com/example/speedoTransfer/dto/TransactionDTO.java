@@ -10,8 +10,8 @@ import java.time.LocalDateTime;
 @Builder
 public class TransactionDTO {
     private Long id;
-    private Account senderAccount;
-    private Account receiverAccount;
+    private Long senderAccountId;
+    private Long receiverAccountId;
     private Double amount;
     private String status;
     private LocalDateTime createdAt;

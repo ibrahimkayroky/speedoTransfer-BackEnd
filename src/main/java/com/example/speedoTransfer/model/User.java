@@ -1,5 +1,7 @@
 package com.example.speedoTransfer.model;
 
+import com.example.speedoTransfer.dto.UpdateUserDTO;
+import com.example.speedoTransfer.dto.UserDTO;
 import com.example.speedoTransfer.enumeration.Role;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -12,11 +14,10 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Data
 @Builder
@@ -47,17 +48,37 @@ public class User implements UserDetails {
     @UpdateTimestamp
     private LocalDateTime updatedAt;
 
+    private Date birthDate;
+
     @OneToMany(mappedBy = "user", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @Builder.Default
     private Set<Account> accounts = new HashSet<>();
 
 
-    @OneToMany(mappedBy = "user", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-    @Builder.Default
-    private Set<FavoriteRecipient> favoriteRecipients = new HashSet<>();
 
 
 
+    public UserDTO toDTO() {
+        return UserDTO.builder()
+                .id(this.id)
+                .name(this.name)
+                .email(this.email)
+                .createdAt(this.createdAt)
+                .updatedAt(this.updatedAt)
+                .birthDate(this.birthDate)
+                .accounts(this.accounts.stream().map(Account::toDTO)
+                        .collect(Collectors.toSet()))
+                .build();
+    }
+
+    public UpdateUserDTO toUpdatedDTO() {
+        return UpdateUserDTO.builder()
+                .name(this.name)
+                .email(this.email)
+                .country(this.country)
+                .birthDate(this.birthDate)
+                .build();
+    }
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return List.of(new SimpleGrantedAuthority(role.name()));

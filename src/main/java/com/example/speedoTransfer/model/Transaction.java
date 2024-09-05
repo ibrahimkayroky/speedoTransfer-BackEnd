@@ -41,8 +41,8 @@ public class Transaction {
     public TransactionDTO toDTO() {
         return TransactionDTO.builder()
                 .id(this.id)
-                .senderAccount(this.senderAccount)
-                .receiverAccount(this.receiverAccount)
+                .senderAccountId(this.senderAccount.getId())
+                .receiverAccountId(this.receiverAccount.getId())
                 .amount(this.amount)
                 .status(this.status)
                 .createdAt(this.createdAt)

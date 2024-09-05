@@ -3,6 +3,7 @@ package com.example.speedoTransfer.model;
 import com.example.speedoTransfer.dto.AccountDTO;
 import com.example.speedoTransfer.enumeration.AccountCurrency;
 import com.example.speedoTransfer.enumeration.AccountType;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -40,8 +41,6 @@ public class Account {
 
     private String accountName;
 
-    private String accountDescription;
-
     @Builder.Default
     @Column(nullable = false)
     private Boolean active = true;
@@ -52,7 +51,7 @@ public class Account {
     @UpdateTimestamp
     private LocalDateTime updatedAt;
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     private User user;
 
     @OneToMany(mappedBy = "senderAccount", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
@@ -60,6 +59,10 @@ public class Account {
 
     @OneToMany(mappedBy = "receiverAccount", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private Set<Transaction> receivedTransactions = new HashSet<>();
+
+    @OneToMany(mappedBy = "account", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @Builder.Default
+    private Set<FavoriteRecipient> favoriteRecipients = new HashSet<>();
 
 
     public AccountDTO toDTO() {
@@ -70,7 +73,6 @@ public class Account {
                 .balance(this.balance)
                 .currency(this.currency)
                 .accountName(this.accountName)
-                .accountDescription(this.accountDescription)
                 .active(this.active)
                 .createdAt(this.createdAt)
                 .updatedAt(this.updatedAt)

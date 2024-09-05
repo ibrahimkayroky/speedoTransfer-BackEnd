@@ -1,10 +1,9 @@
 package com.example.speedoTransfer.util;
 
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
@@ -14,19 +13,19 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
 
+@Slf4j
 @Service
 public class JwtTokenUtil {
 
-    public static final long TokenValidity = 5 * 60 * 60;
+    public static final long TOKEN_VALIDITY = 5 * 60 * 60;
     private static final String SECRET_KEY = "DvdhCDtTBdY6TZCK45DquX66VC3Zw6Mh4Z42CUfY8JR14Bmf3e9xphvXmHHznuSg";
-    public String getUsernameFromToken(String token)
-    {
-        return getClaimFromToken(token , Claims::getSubject);
+
+    public String getUsernameFromToken(String token) {
+        return getClaimFromToken(token, Claims::getSubject);
     }
 
-    public Date getExpirationDateFromToken(String token)
-    {
-        return getClaimFromToken(token,Claims::getExpiration);
+    public Date getExpirationDateFromToken(String token) {
+        return getClaimFromToken(token, Claims::getExpiration);
     }
 
     public <T> T getClaimFromToken(String token, Function<Claims, T> claimsResolver) {
@@ -35,9 +34,9 @@ public class JwtTokenUtil {
     }
 
     private Claims getAllClaimsFromToken(String token) {
-
-        return  Jwts.parser()
-                .setSigningKey(getSignInKey())//sign in key used to create signature part of jwt
+        return Jwts.parserBuilder()
+                .setSigningKey(getSignInKey())
+                .build()
                 .parseClaimsJws(token)
                 .getBody();
     }
@@ -47,9 +46,8 @@ public class JwtTokenUtil {
         return Keys.hmacShaKeyFor(keyBytes);
     }
 
-    public String generateToken(UserDetails userDetails)
-    {
-        return GenerateToken(new HashMap<>(),userDetails.getUsername());
+    public String generateToken(UserDetails userDetails) {
+        return generateToken(new HashMap<>(), userDetails.getUsername());
     }
 
     private Boolean isTokenExpired(String token) {
@@ -57,23 +55,31 @@ public class JwtTokenUtil {
         return expiration.before(new Date());
     }
 
-    private String GenerateToken(Map<String, Object> claims,
-                                 String username) {
+    private String generateToken(Map<String, Object> claims, String username) {
         return Jwts.builder()
-                .setClaims(claims) //add custom claims
-                .setSubject(username) //for whom the token is issued
-                .setIssuedAt(new Date(System.currentTimeMillis()))
-                .setExpiration(new Date(System.currentTimeMillis() + TokenValidity * 1000)) //because it converted to milliseconds
-                .signWith(SignatureAlgorithm.HS256, getSignInKey()) //hash with 512bit key
+                .setClaims(claims)
+                .setSubject(username)
+                .setIssuedAt(new Date())
+                .setExpiration(new Date(System.currentTimeMillis() + TOKEN_VALIDITY * 1000))
+                .signWith(SignatureAlgorithm.HS256, getSignInKey())
                 .compact();
     }
 
-    public Boolean validateToken(String token, UserDetails userDetails)
-    {
-        final String username = getUsernameFromToken(token);
-        return (username.equals(userDetails.getUsername()) && !isTokenExpired(token));
+    public boolean validateJwtToken(String authToken) {
+        try {
+            Jwts.parserBuilder().setSigningKey(getSignInKey()).build().parse(authToken);
+            return true;
+        } catch (MalformedJwtException e) {
+            log.error("Invalid JWT token: {}", e.getMessage());
+        } catch (ExpiredJwtException e) {
+            log.error("JWT token is expired: {}", e.getMessage());
+        } catch (UnsupportedJwtException e) {
+            log.error("JWT token is unsupported: {}", e.getMessage());
+        } catch (IllegalArgumentException e) {
+            log.error("JWT claims string is empty: {}", e.getMessage());
+        } catch (SignatureException e) {
+            log.error("JWT signature does not match locally computed signature: {}", e.getMessage());
+        }
+        return false;
     }
-
-
 }
-
