@@ -1,16 +1,15 @@
 package com.example.speedoTransfer.model;
 
 import com.example.speedoTransfer.dto.TransactionDTO;
+import com.example.speedoTransfer.dto.TransactionWithAccountDTO;
+import com.example.speedoTransfer.enumeration.TransactionStatus;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
-
-@Data
+@Setter
+@Getter
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
@@ -33,7 +32,7 @@ public class Transaction {
     private Double amount;
 
     @Column(nullable = false)
-    private String status;  // "COMPLETED", "FAILED"
+    private TransactionStatus status;  // "COMPLETED", "FAILED"
 
     @CreationTimestamp
     private LocalDateTime createdAt;
@@ -41,12 +40,22 @@ public class Transaction {
     public TransactionDTO toDTO() {
         return TransactionDTO.builder()
                 .id(this.id)
-                .senderAccountId(this.senderAccount.getId())
-                .receiverAccountId(this.receiverAccount.getId())
-                .amount(this.amount)
+                .senderAccount(this.senderAccount.getAccountName())
+                .receiverAccount(this.receiverAccount.getUser().getEmail())
+                .receiverName(this.receiverAccount.getUser().getName())
                 .status(this.status)
-                .createdAt(this.createdAt)
+                .amount(this.amount)
                 .build();
     }
 
+    public TransactionWithAccountDTO toDTOWithAccount() {
+        return TransactionWithAccountDTO.builder()
+                .id(this.id)
+                .senderAccountName(this.senderAccount.getAccountName())
+                .receiverAccountName(this.receiverAccount.getAccountName())
+//                .status(TransactionStatus.COMPLETED)
+                .amount(this.amount)
+                .createdAt(this.createdAt)
+                .build();
+    }
 }
