@@ -1,11 +1,15 @@
 package com.example.speedoTransfer.controller;
 
 import com.example.speedoTransfer.dto.TransactionDTO;
+import com.example.speedoTransfer.dto.TransactionWithAccountDTO;
 import com.example.speedoTransfer.model.Transaction;
+import com.example.speedoTransfer.repository.TransactionRepository;
 import com.example.speedoTransfer.service.ITransactionService;
-import com.example.speedoTransfer.service.TransactionService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/transactions")
@@ -14,13 +18,22 @@ public class TransactionController {
 
     private final ITransactionService transactionService;
 
-    @PostMapping("/createTransaction")
-    public TransactionDTO createTransaction(@RequestBody TransactionDTO transactionDTO) {
-        return transactionService.createTransaction(transactionDTO);
+    private final TransactionRepository transactionRepository;
+
+    @PostMapping("/transfer/{userId}")
+    public TransactionDTO Transfer(@RequestBody TransactionDTO transactionDTO,Long userId) {
+        return transactionService.Transfer(transactionDTO,userId);
     }
 
     @GetMapping("/{transactionid}")
-    public Transaction getTransactionById(@PathVariable Long transactionid) {
+    public TransactionWithAccountDTO getTransactionById(@PathVariable Long transactionid) {
         return this.transactionService.getTransactionById(transactionid);
+    }
+    @GetMapping("/getAllTransactions/{userid}")
+    public List<TransactionWithAccountDTO> getTransactionByAccountId(@PathVariable Long userid) {
+        List<Transaction> transactions = transactionRepository.findBySenderAccountId(userid);
+        return transactions.stream()
+                .map(Transaction::toDTOWithAccount)
+                .collect(Collectors.toList());
     }
 }
