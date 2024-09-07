@@ -19,11 +19,11 @@ public class CreateAccountDTO {
     @NotNull
     private AccountType accountType;
 
-    @NotNull
-    private AccountCurrency currency;
-
     @NotBlank
     private String accountName;
+
+    @NotNull
+    private AccountCurrency currency;
 
     @NotNull
     private Long userId;

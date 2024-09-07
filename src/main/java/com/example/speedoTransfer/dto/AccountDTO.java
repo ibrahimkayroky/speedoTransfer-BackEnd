@@ -20,15 +20,11 @@ public class AccountDTO {
 
     private String accountNumber;
 
-    private AccountType accountType;
-
     private Double balance;
-
-    private AccountCurrency currency;
 
     private String accountName;
 
-    private String accountDescription;
+    private AccountCurrency currency;
 
     private Boolean active;
 
