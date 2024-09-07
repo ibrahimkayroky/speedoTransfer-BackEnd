@@ -9,5 +9,5 @@ public class FavoriteRecipientDTO {
     private Long id;
     private String recipientAccount;
     private String recipientName;
-    private Long accountId;
+    private Long userId;
 }
