@@ -2,7 +2,12 @@ package com.example.speedoTransfer.service;
 
 import com.example.speedoTransfer.dto.UpdateUserDTO;
 import com.example.speedoTransfer.dto.UserDTO;
+import com.example.speedoTransfer.exception.custom.FavoriteRecipientException;
 import com.example.speedoTransfer.exception.custom.ResourceNotFoundException;
+import com.example.speedoTransfer.model.FavoriteRecipient;
+import com.example.speedoTransfer.model.User;
+
+import java.util.Set;
 
 public interface IUserService {
 
@@ -15,7 +20,8 @@ public interface IUserService {
      */
     UserDTO getUserById(Long userId) throws  ResourceNotFoundException;
     UserDTO updateUser(Long accountId, UpdateUserDTO accountDTO);
-    void changePassword(Long userId, String oldPassword, String newPassword);
+    void updatePassword(Long userId, String oldPassword, String newPassword);
+    Set<FavoriteRecipient> getAllFavoriteRecipients(Long userId) throws FavoriteRecipientException;
 
 
 }
