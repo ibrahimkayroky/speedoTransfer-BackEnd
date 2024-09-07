@@ -3,8 +3,13 @@ package com.example.speedoTransfer.service;
 
 import com.example.speedoTransfer.dto.AccountDTO;
 import com.example.speedoTransfer.dto.CreateAccountDTO;
+import com.example.speedoTransfer.dto.TransactionDTO;
 import com.example.speedoTransfer.dto.UpdateUserDTO;
 import com.example.speedoTransfer.exception.custom.ResourceNotFoundException;
+import com.example.speedoTransfer.model.Transaction;
+
+import javax.security.auth.login.AccountNotFoundException;
+import java.util.Set;
 
 public interface IAccountService {
 
@@ -24,8 +29,9 @@ public interface IAccountService {
      * @return the account
      * @throws ResourceNotFoundException if the account is not found
      */
-    AccountDTO getAccountById(Long accountId) throws ResourceNotFoundException;
+    AccountDTO getAccountById(Long accountId) throws AccountNotFoundException;
 
+    Set<TransactionDTO> getAllTransactions(Long accountId) throws AccountNotFoundException;
     void deposit(Long accountId, Double amount);
 
 
