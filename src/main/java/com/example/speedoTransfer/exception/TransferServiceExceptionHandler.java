@@ -1,7 +1,6 @@
 package com.example.speedoTransfer.exception;
 
-import com.example.speedoTransfer.exception.custom.ResourceNotFoundException;
-import com.example.speedoTransfer.exception.custom.UserAlreadyExistsException;
+import com.example.speedoTransfer.exception.custom.*;
 import com.example.speedoTransfer.exception.response.ErrorDetails;
 import com.example.speedoTransfer.exception.response.ValidationFailedResponse;
 import com.example.speedoTransfer.exception.response.ViolationErrors;
@@ -21,8 +20,23 @@ import java.time.LocalDateTime;
 @ControllerAdvice
 public class TransferServiceExceptionHandler {
 
+    @ExceptionHandler(UserDoesNotExistsException.class)
+    public ResponseEntity<String> handleUserDoesNotExistsException(UserDoesNotExistsException ex) {
+        return new ResponseEntity<>(ex.getMessage(), HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(FavoriteRecipientException.class)
+    public ResponseEntity<String> handleFavoriteRecipientException(FavoriteRecipientException ex) {
+        return new ResponseEntity<>(ex.getMessage(), HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(FavoriteRecipientNotFoundException.class)
+    public ResponseEntity<String> handleFavoriteRecipientNotFoundException(FavoriteRecipientNotFoundException ex) {
+        return new ResponseEntity<>(ex.getMessage(), HttpStatus.NOT_FOUND);
+    }
+
     @ExceptionHandler(UserAlreadyExistsException.class)
-    public ResponseEntity<Object> customerAlreadyExistExceptionHandling(UserAlreadyExistsException exception, WebRequest request) {
+    public ResponseEntity<Object> userAlreadyExistExceptionHandling(UserAlreadyExistsException exception, WebRequest request) {
         return new ResponseEntity<>(new ErrorDetails(LocalDateTime.now(), exception.getMessage(),
                 request.getDescription(false), HttpStatus.BAD_REQUEST), HttpStatus.BAD_REQUEST);
     }
