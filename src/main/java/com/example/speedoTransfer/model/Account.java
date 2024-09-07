@@ -3,20 +3,17 @@ package com.example.speedoTransfer.model;
 import com.example.speedoTransfer.dto.AccountDTO;
 import com.example.speedoTransfer.enumeration.AccountCurrency;
 import com.example.speedoTransfer.enumeration.AccountType;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
-
-@Data
+@Setter
+@Getter
 @Entity
 @Builder
 @AllArgsConstructor
@@ -31,15 +28,18 @@ public class Account {
     private String accountNumber;
 
     @Column(nullable = false)
-    private AccountType accountType;
-
-    @Column(nullable = false)
     private Double balance;
 
     @Column(nullable = false)
+    private String accountName;
+
+    @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
     private AccountCurrency currency;
 
-    private String accountName;
+    @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
+    private AccountType accountType;
 
     @Builder.Default
     @Column(nullable = false)
@@ -51,28 +51,31 @@ public class Account {
     @UpdateTimestamp
     private LocalDateTime updatedAt;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
     @OneToMany(mappedBy = "senderAccount", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JsonIgnore
     private Set<Transaction> sentTransactions = new HashSet<>();
 
     @OneToMany(mappedBy = "receiverAccount", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JsonIgnore
     private Set<Transaction> receivedTransactions = new HashSet<>();
-
-    @OneToMany(mappedBy = "account", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    @Builder.Default
-    private Set<FavoriteRecipient> favoriteRecipients = new HashSet<>();
+//
+//    @OneToMany(mappedBy = "account", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+//    @JsonIgnore
+//    @Builder.Default
+//    private Set<FavoriteRecipient> favoriteRecipients = new HashSet<>();
 
 
     public AccountDTO toDTO() {
         return AccountDTO.builder()
                 .id(this.id)
                 .accountNumber(this.accountNumber)
-                .accountType(this.accountType)
                 .balance(this.balance)
-                .currency(this.currency)
-                .accountName(this.accountName)
+                .currency(AccountCurrency.USD)
                 .active(this.active)
                 .createdAt(this.createdAt)
                 .updatedAt(this.updatedAt)
