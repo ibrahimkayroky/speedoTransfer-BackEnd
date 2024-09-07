@@ -2,8 +2,10 @@ package com.example.speedoTransfer.controller;
 
 import com.example.speedoTransfer.dto.AccountDTO;
 import com.example.speedoTransfer.dto.CreateAccountDTO;
+import com.example.speedoTransfer.dto.TransactionDTO;
 import com.example.speedoTransfer.exception.custom.ResourceNotFoundException;
 import com.example.speedoTransfer.exception.response.ErrorDetails;
+import com.example.speedoTransfer.model.Transaction;
 import com.example.speedoTransfer.service.IAccountService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -14,6 +16,9 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+
+import javax.security.auth.login.AccountNotFoundException;
+import java.util.Set;
 
 @RestController
 @RequestMapping("/api/v1/account")
@@ -36,7 +41,12 @@ public class AccountController {
     @ApiResponse(responseCode = "200", content = {@Content(schema = @Schema(implementation = AccountDTO.class), mediaType = "application/json")})
     @ApiResponse(responseCode = "400", content = {@Content(schema = @Schema(implementation = ErrorDetails.class), mediaType = "application/json")})
     @GetMapping("/{accountId}")
-    public AccountDTO getAccountById(@PathVariable Long accountId) throws ResourceNotFoundException {
+    public AccountDTO getAccountById(@PathVariable Long accountId) throws AccountNotFoundException {
         return this.accountService.getAccountById(accountId);
+    }
+
+    @GetMapping("/getAllTransactions/{accountId}")
+    public Set<TransactionDTO> getAllTransactions(@PathVariable Long accountId) throws AccountNotFoundException {
+        return this.accountService.getAllTransactions(accountId);
     }
 }
