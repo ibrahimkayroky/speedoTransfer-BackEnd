@@ -1,26 +1,25 @@
 package com.example.speedoTransfer.model;
 
+import com.example.speedoTransfer.auth.RegisterResponse;
 import com.example.speedoTransfer.dto.UpdateUserDTO;
 import com.example.speedoTransfer.dto.UserDTO;
 import com.example.speedoTransfer.enumeration.Role;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.*;
-import java.util.stream.Collectors;
 
-@Data
 @Builder
+@Setter
+@Getter
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
@@ -50,12 +49,27 @@ public class User implements UserDetails {
 
     private Date birthDate;
 
-    @OneToMany(mappedBy = "user", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+//    @OneToMany(mappedBy = "user", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+//    @Builder.Default
+////    @JsonIgnore
+//    private Set<Account> accounts = new HashSet<>();
+//
+
+    @OneToOne(mappedBy = "user", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    private Account account;
+
+
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JsonManagedReference
     @Builder.Default
-    private Set<Account> accounts = new HashSet<>();
+    private Set<FavoriteRecipient> favoriteRecipients = new HashSet<>();
 
-
-
+    public RegisterResponse toRegistrationResponse() {
+        return RegisterResponse.builder()
+                .name(this.name)
+                .email(this.email)
+                .build();
+    }
 
 
     public UserDTO toDTO() {
@@ -66,8 +80,7 @@ public class User implements UserDetails {
                 .createdAt(this.createdAt)
                 .updatedAt(this.updatedAt)
                 .birthDate(this.birthDate)
-                .accounts(this.accounts.stream().map(Account::toDTO)
-                        .collect(Collectors.toSet()))
+                .balance(this.account.getBalance())
                 .build();
     }
 
