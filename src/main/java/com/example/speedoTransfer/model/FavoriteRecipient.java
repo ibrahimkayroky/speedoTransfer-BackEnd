@@ -4,12 +4,10 @@ import com.example.speedoTransfer.dto.FavoriteAccountDTO;
 import com.example.speedoTransfer.dto.FavoriteRecipientDTO;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
-@Data
+@Setter
+@Getter
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
@@ -26,16 +24,16 @@ public class FavoriteRecipient {
     @Column(nullable = false)
     private String recipientName;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "account_id")
-    private Account account;
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JsonBackReference
+    private User user;
 
     public FavoriteRecipientDTO toDTO() {
         return FavoriteRecipientDTO.builder()
                 .id(this.id)
                 .recipientAccount(this.recipientAccount)
                 .recipientName(this.recipientName)
-                .accountId(account.getId())
+                .userId(user.getId())
                 .build();
     }
     public FavoriteAccountDTO toDTO2()
