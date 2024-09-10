@@ -1,9 +1,10 @@
-package com.example.speedoTransfer.config;
+package com.example.speedoTransfer.security.config;
 
+import com.example.speedoTransfer.config.JwtAuthenticationEntryPoint;
+import com.example.speedoTransfer.security.filter.JwtRequestFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
@@ -29,7 +30,7 @@ public class securityConfig{
                 .disable()
                 .authorizeHttpRequests()
                 .requestMatchers("/swagger-ui/**", "/v3/api-docs/**", "/swagger-resources/**", "/webjars/**", "/actuator/**", "/api/v1/**","/api/transactions/**","/api/favorites/**",
-                        "/api/users/**","/api/accounts/**","/api/transactions/**")
+                        "/api/accounts/**","/api/transactions/**")
                 .permitAll()
                 .anyRequest()
                 .authenticated()

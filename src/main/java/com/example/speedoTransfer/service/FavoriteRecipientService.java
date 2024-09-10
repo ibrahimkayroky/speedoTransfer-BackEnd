@@ -1,21 +1,18 @@
 package com.example.speedoTransfer.service;
 
 import com.example.speedoTransfer.dto.FavoriteRecipientDTO;
-import com.example.speedoTransfer.dto.UserDTO;
 import com.example.speedoTransfer.exception.custom.FavoriteRecipientNotFoundException;
-import com.example.speedoTransfer.exception.custom.UserAlreadyExistsException;
-import com.example.speedoTransfer.exception.custom.UserDoesNotExistsException;
-import com.example.speedoTransfer.model.Account;
 import com.example.speedoTransfer.model.FavoriteRecipient;
 import com.example.speedoTransfer.model.User;
-import com.example.speedoTransfer.repository.AccountRepository;
 import com.example.speedoTransfer.repository.FavoriteRecipientRepository;
 import com.example.speedoTransfer.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 
 @Service
@@ -24,14 +21,14 @@ public class FavoriteRecipientService implements IFavoriteRecipientService {
 
     private final FavoriteRecipientRepository favoriteRecipientRepository;
 
-    private final AccountRepository accountRepository;
 
     private final UserRepository userRepository;
     @Override
     @Transactional
-    public FavoriteRecipientDTO addFavoriteRecipient(FavoriteRecipientDTO favoriteRecipientDTO) throws UserDoesNotExistsException {
+    public FavoriteRecipientDTO addFavoriteRecipient(FavoriteRecipientDTO favoriteRecipientDTO){
 
-        User user = userRepository.findById(favoriteRecipientDTO.getUserId())
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+        User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new IllegalArgumentException("Sender account not found"));
 
 
@@ -65,5 +62,18 @@ public class FavoriteRecipientService implements IFavoriteRecipientService {
         }
         favoriteRecipientRepository.deleteById(id);
 
+    }
+
+    @Override
+    public void deleteFavoriteRecipientByUserIdAndDetails(Long id, String recipientAccount) throws FavoriteRecipientNotFoundException {
+        Optional<FavoriteRecipient> favoriteRecipientOpt = favoriteRecipientRepository
+                .findByUserIdAndRecipientAccount(id, recipientAccount);
+
+        if (favoriteRecipientOpt.isEmpty()) {
+            throw new FavoriteRecipientNotFoundException("Favorite recipient not found for user with ID: " + id);
+        }
+
+        FavoriteRecipient favoriteRecipient = favoriteRecipientOpt.get();
+        favoriteRecipientRepository.delete(favoriteRecipient);
     }
 }

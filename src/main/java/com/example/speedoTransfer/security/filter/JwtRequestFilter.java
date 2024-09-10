@@ -1,6 +1,6 @@
-package com.example.speedoTransfer.config;
+package com.example.speedoTransfer.security.filter;
 
-import com.example.speedoTransfer.util.JwtTokenUtil;
+import com.example.speedoTransfer.security.util.JwtTokenUtil;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -39,8 +39,10 @@ public class JwtRequestFilter extends OncePerRequestFilter {
             filterChain.doFilter(request,response);
             return;
         }
+
         jwtToken = requestTokenHeader.substring(7);
         userEmail = jwtTokenUtil.getUsernameFromToken(jwtToken);//extract from jwt token
+
         if (userEmail != null && SecurityContextHolder.getContext().getAuthentication() == null)
         {
             UserDetails userDetails = this.userDetailsService.loadUserByUsername(userEmail);

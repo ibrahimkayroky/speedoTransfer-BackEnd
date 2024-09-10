@@ -1,4 +1,4 @@
-package com.example.speedoTransfer.util;
+package com.example.speedoTransfer.security.util;
 
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
@@ -17,7 +17,9 @@ import java.util.function.Function;
 @Service
 public class JwtTokenUtil {
 
-    public static final long TOKEN_VALIDITY = 5 * 60 * 60;
+    public static final long ACCESS_TOKEN_VALIDITY = 5 * 60 * 60;
+    public static final long REFRESH_TOKEN_VALIDITY = 7 * 24 * 60 * 60; // 7 days
+
     private static final String SECRET_KEY = "DvdhCDtTBdY6TZCK45DquX66VC3Zw6Mh4Z42CUfY8JR14Bmf3e9xphvXmHHznuSg";
 
     public String getUsernameFromToken(String token) {
@@ -46,25 +48,29 @@ public class JwtTokenUtil {
         return Keys.hmacShaKeyFor(keyBytes);
     }
 
-    public String generateToken(UserDetails userDetails) {
-        return generateToken(new HashMap<>(), userDetails.getUsername());
+
+    public String generateAccessToken(UserDetails userDetails) {
+        return generateToken(new HashMap<>(), userDetails.getUsername(), ACCESS_TOKEN_VALIDITY);
     }
 
+    public String generateRefreshToken(UserDetails userDetails) {
+        return generateToken(new HashMap<>(), userDetails.getUsername(), REFRESH_TOKEN_VALIDITY);
+    }
     private Boolean isTokenExpired(String token) {
         final Date expiration = getExpirationDateFromToken(token);
         return expiration.before(new Date());
     }
 
-    private String generateToken(Map<String, Object> claims, String username) {
+
+    private String generateToken(Map<String, Object> claims, String username, long validity) {
         return Jwts.builder()
                 .setClaims(claims)
                 .setSubject(username)
                 .setIssuedAt(new Date())
-                .setExpiration(new Date(System.currentTimeMillis() + TOKEN_VALIDITY * 1000))
+                .setExpiration(new Date(System.currentTimeMillis() + validity * 1000))
                 .signWith(SignatureAlgorithm.HS256, getSignInKey())
                 .compact();
     }
-
     public boolean validateJwtToken(String authToken) {
         try {
             Jwts.parserBuilder().setSigningKey(getSignInKey()).build().parse(authToken);

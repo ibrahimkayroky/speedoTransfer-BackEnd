@@ -1,6 +1,10 @@
 package com.example.speedoTransfer.controller;
 
 import com.example.speedoTransfer.auth.*;
+import com.example.speedoTransfer.security.model.AuthenticationRequest;
+import com.example.speedoTransfer.security.model.AuthenticationResponse;
+import com.example.speedoTransfer.security.model.RefreshTokenRequest;
+import com.example.speedoTransfer.security.service.AuthenticationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -15,12 +19,8 @@ public class AuthenticationController {
 
     private final AuthenticationService service;
 
-    @PostMapping("/test")
-    public ResponseEntity<String> testEndpoint() {
-        return ResponseEntity.ok("Test endpoint hit successfully!");
-    }
     @PostMapping("/register")
-    public ResponseEntity<RegisterResponse> register(
+    public ResponseEntity<AuthenticationResponse> register(
             @RequestBody RegisterRequest request
     ) {
         return ResponseEntity.ok(service.register(request));
@@ -31,7 +31,11 @@ public class AuthenticationController {
     ) {
         return ResponseEntity.ok(service.authenticate(request));
     }
-
+    @PostMapping("/refresh-token")
+    public ResponseEntity<AuthenticationResponse> refreshToken(@RequestBody RefreshTokenRequest request) {
+        AuthenticationResponse response = service.refreshToken(request.getRefreshToken());
+        return ResponseEntity.ok(response);
+    }
 
 
 }

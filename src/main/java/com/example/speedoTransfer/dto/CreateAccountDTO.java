@@ -2,7 +2,6 @@ package com.example.speedoTransfer.dto;
 
 import com.example.speedoTransfer.enumeration.AccountCurrency;
 import com.example.speedoTransfer.enumeration.AccountType;
-import com.example.speedoTransfer.model.User;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;

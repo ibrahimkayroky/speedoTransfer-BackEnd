@@ -1,12 +1,10 @@
 package com.example.speedoTransfer.dto;
 
 
-import com.example.speedoTransfer.model.Account;
 import lombok.*;
 
 import java.time.LocalDateTime;
 import java.util.Date;
-import java.util.Set;
 
 @AllArgsConstructor
 @NoArgsConstructor

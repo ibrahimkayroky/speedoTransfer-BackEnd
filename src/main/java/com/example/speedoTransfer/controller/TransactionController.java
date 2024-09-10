@@ -1,15 +1,14 @@
 package com.example.speedoTransfer.controller;
 
-import com.example.speedoTransfer.dto.TransactionDTO;
-import com.example.speedoTransfer.dto.TransactionWithAccountDTO;
-import com.example.speedoTransfer.model.Transaction;
-import com.example.speedoTransfer.repository.TransactionRepository;
+import com.example.speedoTransfer.dto.TransactionTransferDTO;
+import com.example.speedoTransfer.exception.custom.ResourceNotFoundException;
+import com.example.speedoTransfer.model.User;
+import com.example.speedoTransfer.repository.UserRepository;
+import org.springframework.security.core.context.SecurityContextHolder;
 import com.example.speedoTransfer.service.ITransactionService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/transactions")
@@ -18,22 +17,28 @@ public class TransactionController {
 
     private final ITransactionService transactionService;
 
-    private final TransactionRepository transactionRepository;
+    private final UserRepository userRepository;
 
-    @PostMapping("/transfer/{userId}")
-    public TransactionDTO Transfer(@RequestBody TransactionDTO transactionDTO,Long userId) {
-        return transactionService.Transfer(transactionDTO,userId);
+    @PostMapping("/transfer")
+    public TransactionTransferDTO Transfer(@RequestBody TransactionTransferDTO transactionTransferDTO) throws ResourceNotFoundException {
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found with email: " + email));
+        return transactionService.Transfer(transactionTransferDTO,user.getId());
     }
 
-    @GetMapping("/{transactionid}")
-    public TransactionWithAccountDTO getTransactionById(@PathVariable Long transactionid) {
-        return this.transactionService.getTransactionById(transactionid);
-    }
-    @GetMapping("/getAllTransactions/{userid}")
-    public List<TransactionWithAccountDTO> getTransactionByAccountId(@PathVariable Long userid) {
-        List<Transaction> transactions = transactionRepository.findBySenderAccountId(userid);
-        return transactions.stream()
-                .map(Transaction::toDTOWithAccount)
-                .collect(Collectors.toList());
-    }
+//    @GetMapping("/{transactionid}")
+//    public TransactionWithAccountDTO getTransactionById(@PathVariable Long transactionid) {
+//        return this.transactionService.getTransactionById(transactionid);
+//    }
+//    @GetMapping("/getAllTransactions")
+//    public List<TransactionWithAccountDTO> getTransactionByAccountId()throws ResourceNotFoundException {
+//        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+//        User user = userRepository.findByEmail(email)
+//                .orElseThrow(() -> new ResourceNotFoundException("User not found with email: " + email));
+//        List<Transaction> transactions = transactionRepository.findBySenderAccountId(user.getId());
+//        return transactions.stream()
+//                .map(Transaction::toDTOWithAccount)
+//                .collect(Collectors.toList());
+//    }
 }

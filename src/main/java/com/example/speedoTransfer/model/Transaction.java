@@ -1,6 +1,7 @@
 package com.example.speedoTransfer.model;
 
 import com.example.speedoTransfer.dto.TransactionDTO;
+import com.example.speedoTransfer.dto.TransactionTransferDTO;
 import com.example.speedoTransfer.dto.TransactionWithAccountDTO;
 import com.example.speedoTransfer.enumeration.TransactionStatus;
 import jakarta.persistence.*;
@@ -32,7 +33,7 @@ public class Transaction {
     private Double amount;
 
     @Column(nullable = false)
-    private TransactionStatus status;  // "COMPLETED", "FAILED"
+    private TransactionStatus status;
 
     @CreationTimestamp
     private LocalDateTime createdAt;
@@ -53,9 +54,18 @@ public class Transaction {
                 .id(this.id)
                 .senderAccountName(this.senderAccount.getAccountName())
                 .receiverAccountName(this.receiverAccount.getAccountName())
-//                .status(TransactionStatus.COMPLETED)
                 .amount(this.amount)
                 .createdAt(this.createdAt)
+                .build();
+    }
+
+    public TransactionTransferDTO toDTOTransfer() {
+        return TransactionTransferDTO.builder()
+                .id(this.id)
+                .receiverAccount(this.receiverAccount.getUser().getEmail())
+                .receiverName(this.receiverAccount.getUser().getName())
+                .amount(this.amount)
+                .status(this.status)
                 .build();
     }
 }

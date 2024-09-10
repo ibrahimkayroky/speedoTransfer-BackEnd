@@ -4,15 +4,12 @@ package com.example.speedoTransfer.service;
 import com.example.speedoTransfer.dto.AccountDTO;
 import com.example.speedoTransfer.dto.CreateAccountDTO;
 import com.example.speedoTransfer.dto.TransactionDTO;
-import com.example.speedoTransfer.dto.UpdateUserDTO;
 import com.example.speedoTransfer.enumeration.AccountCurrency;
-import com.example.speedoTransfer.exception.custom.FavoriteRecipientException;
 import com.example.speedoTransfer.exception.custom.ResourceNotFoundException;
 import com.example.speedoTransfer.model.Account;
 import com.example.speedoTransfer.model.Transaction;
 import com.example.speedoTransfer.model.User;
 import com.example.speedoTransfer.repository.AccountRepository;
-import com.example.speedoTransfer.repository.TransactionRepository;
 import com.example.speedoTransfer.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -32,8 +29,6 @@ public class AccountService implements IAccountService {
 
     private final UserRepository userRepository;
 
-    private final TransactionRepository transactionRepository;
-
     @Override
     @Transactional
     public AccountDTO createAccount(CreateAccountDTO accountDTO) throws ResourceNotFoundException {
@@ -48,6 +43,7 @@ public class AccountService implements IAccountService {
                 .user(user)
                 .build();
 
+        user.setAccount(account);
         Account savedAccount = this.accountRepository.save(account);
 
         return savedAccount.toDTO();
@@ -60,9 +56,9 @@ public class AccountService implements IAccountService {
     }
 
     @Override
-    public Set<TransactionDTO> getAllTransactions(Long accountId) throws AccountNotFoundException {
+    public Set<TransactionDTO> getAllTransactions(Long accountId) throws ResourceNotFoundException {
         Account account = accountRepository.findById(accountId)
-                .orElseThrow(() -> new AccountNotFoundException("Account not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Account not found"));
 
         Set<Transaction> allTransactions = new HashSet<>(account.getSentTransactions());
         allTransactions.addAll(account.getReceivedTransactions());
@@ -73,8 +69,4 @@ public class AccountService implements IAccountService {
     }
 
 
-    @Override
-    public void deposit(Long accountId, Double amount) {
-
-    }
 }

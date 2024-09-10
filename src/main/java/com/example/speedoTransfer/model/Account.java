@@ -63,7 +63,7 @@ public class Account {
     @OneToMany(mappedBy = "receiverAccount", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JsonIgnore
     private Set<Transaction> receivedTransactions = new HashSet<>();
-//
+
 //    @OneToMany(mappedBy = "account", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 //    @JsonIgnore
 //    @Builder.Default

@@ -2,7 +2,6 @@ package com.example.speedoTransfer.dto;
 
 
 import com.example.speedoTransfer.enumeration.AccountCurrency;
-import com.example.speedoTransfer.enumeration.AccountType;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;

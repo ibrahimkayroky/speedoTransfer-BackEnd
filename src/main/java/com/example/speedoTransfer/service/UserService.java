@@ -33,8 +33,8 @@ public class UserService implements IUserService {
     }
 
     @Override
-    public UserDTO updateUser(Long userId, UpdateUserDTO updatedUserDTO) {
-        User existingUser = userRepository.findById(userId)
+    public UserDTO updateUser(String email, UpdateUserDTO updatedUserDTO) {
+        User existingUser = userRepository.findByEmail(email)
                 .orElseThrow(() -> new IllegalArgumentException("User not found"));
 
         updateIfPresent(updatedUserDTO.getName(), existingUser::setName);
@@ -48,9 +48,9 @@ public class UserService implements IUserService {
     }
 
     @Override
-    public void updatePassword(Long userId, String oldPassword, String newPassword) {
+    public void updatePassword(String email, String oldPassword, String newPassword) {
 
-        User existingUser = userRepository.findById(userId)
+        User existingUser = userRepository.findByEmail(email)
                 .orElseThrow(() -> new IllegalArgumentException("User not found"));
 
         // Verify the old password

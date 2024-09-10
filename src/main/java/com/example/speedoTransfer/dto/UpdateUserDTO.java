@@ -1,6 +1,7 @@
 package com.example.speedoTransfer.dto;
 
 
+import com.example.speedoTransfer.enumeration.Country;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -16,9 +17,10 @@ public class UpdateUserDTO {
 
     private String name;
 
+
     private String email;
 
-    private String country;
+    private Country country;
 
     private Date birthDate;
 

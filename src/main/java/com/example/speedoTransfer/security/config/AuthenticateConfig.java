@@ -1,4 +1,4 @@
-package com.example.speedoTransfer.config;
+package com.example.speedoTransfer.security.config;
 
 import com.example.speedoTransfer.service.JwtUserDetailsService;
 import org.springframework.context.annotation.Bean;

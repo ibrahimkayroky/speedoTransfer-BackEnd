@@ -3,16 +3,15 @@ package com.example.speedoTransfer.controller;
 import com.example.speedoTransfer.dto.UpdatePasswordRequest;
 import com.example.speedoTransfer.dto.UpdateUserDTO;
 import com.example.speedoTransfer.dto.UserDTO;
-import com.example.speedoTransfer.exception.custom.FavoriteRecipientException;
 import com.example.speedoTransfer.exception.custom.ResourceNotFoundException;
-import com.example.speedoTransfer.model.FavoriteRecipient;
 import com.example.speedoTransfer.model.User;
+import com.example.speedoTransfer.repository.UserRepository;
 import com.example.speedoTransfer.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Set;
 
 @RestController
 @RequestMapping("/api/v1/user")
@@ -20,25 +19,34 @@ import java.util.Set;
 public class UserController {
 
     private final UserService userService;
+    private final UserRepository userRepository;
 
-    @PutMapping("/updateUser/{userId}")
-    public UserDTO updateUser(@PathVariable Long userId, @RequestBody UpdateUserDTO updateUserDTO){
-        return userService.updateUser(userId, updateUserDTO);
+    @PutMapping("/updateUserProfile")
+    public ResponseEntity<String> updateUser(@RequestBody UpdateUserDTO updateUserDTO){
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+        userService.updateUser(email, updateUserDTO);
+        return ResponseEntity.ok("User updated successfully");
+
     }
 
-    @PutMapping("/updateUser/{userId}/password")
-    public ResponseEntity<String> updatePassword(@PathVariable Long userId, @RequestBody UpdatePasswordRequest password) {
-        userService.updatePassword(userId, password.getOldPassword(), password.getNewPassword());
+    @PutMapping("/updateUserPassword")
+    public ResponseEntity<String> updatePassword(@RequestBody UpdatePasswordRequest password) {
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+        userService.updatePassword(email, password.getOldPassword(), password.getNewPassword());
         return ResponseEntity.ok("Password updated successfully");
     }
 
-    @GetMapping("/getUser/{userId}")
-    public UserDTO getUser(@PathVariable Long userId) throws ResourceNotFoundException {
-        return userService.getUserById(userId);
+    @GetMapping("/getUser")
+    public ResponseEntity<UserDTO> getUser() throws ResourceNotFoundException {
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found with email: " + email));
+        UserDTO userDTO = user.toDTO();
+        return ResponseEntity.ok().body(userDTO);
     }
 
-    @GetMapping("/getRecipient/")
-    public Set<FavoriteRecipient> getRecipient(@RequestParam Long userId) throws FavoriteRecipientException {
-        return userService.getAllFavoriteRecipients(userId);
-    }
+//    @GetMapping("/getRecipient")
+//    public Set<FavoriteRecipient> getRecipient(@RequestParam Long userId) throws FavoriteRecipientException {
+//        return userService.getAllFavoriteRecipients(userId);
+//    }
 }

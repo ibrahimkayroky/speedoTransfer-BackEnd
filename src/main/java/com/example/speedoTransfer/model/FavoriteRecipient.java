@@ -1,9 +1,9 @@
 package com.example.speedoTransfer.model;
 
-import com.example.speedoTransfer.dto.FavoriteAccountDTO;
 import com.example.speedoTransfer.dto.FavoriteRecipientDTO;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 
 @Setter
@@ -18,9 +18,11 @@ public class FavoriteRecipient {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @NotBlank(message = "Recipient account cannot be blank")
     @Column(nullable = false)
     private String recipientAccount;
 
+    @NotBlank(message = "Recipient Name cannot be blank")
     @Column(nullable = false)
     private String recipientName;
 
@@ -36,12 +38,5 @@ public class FavoriteRecipient {
                 .userId(user.getId())
                 .build();
     }
-    public FavoriteAccountDTO toDTO2()
-    {
-        return FavoriteAccountDTO.builder()
-                .id(this.id)
-                .recipientAccount(this.recipientAccount)
-                .recipientName(this.recipientName)
-                .build();
-    }
+
 }
