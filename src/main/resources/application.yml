@@ -1,9 +1,9 @@
 
 spring:
     datasource:
-        url: jdbc:postgresql://localhost:5432/Jwt-Security
+        url: jdbc:postgresql://postgres.railway.internal:5432/railway
         username: postgres
-        password: 3006
+        password: RQHxdiMrlTrBSoDkRzVxRXDfDqdPtOYS
         driver-class-name: org.postgresql.Driver
     jpa:
         hibernate:
