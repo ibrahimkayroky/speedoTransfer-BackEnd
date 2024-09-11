@@ -5,10 +5,12 @@ import com.example.speedoTransfer.dto.UpdateUserDTO;
 import com.example.speedoTransfer.dto.UserDTO;
 import com.example.speedoTransfer.enumeration.Country;
 import com.example.speedoTransfer.enumeration.Role;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
@@ -46,8 +48,8 @@ public class User implements UserDetails {
     @Size(min = 6, message = "Password must be at least 6 characters")
     private String password;
 
-    @Enumerated(EnumType.STRING)
-    private Country country;
+    @NotNull(message = "Country is required")
+    private String country;
 
     @Enumerated(EnumType.STRING)
     private Role role;
@@ -58,6 +60,7 @@ public class User implements UserDetails {
     @UpdateTimestamp
     private LocalDateTime updatedAt;
 
+    @JsonFormat(shape = JsonFormat.Shape.STRING , pattern = "dd-MM-yyyy")
     private Date birthDate;
 
 //    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
@@ -88,9 +91,8 @@ public class User implements UserDetails {
                 .id(this.id)
                 .name(this.name)
                 .email(this.email)
-                .createdAt(this.createdAt)
-                .updatedAt(this.updatedAt)
                 .birthDate(this.birthDate)
+                .country(this.country)
                 .balance(this.account.getBalance())
 //                .balance(this.account.stream().mapToDouble(Account::getBalance).sum())
                 .build();
@@ -100,7 +102,7 @@ public class User implements UserDetails {
         return UpdateUserDTO.builder()
                 .name(this.name)
                 .email(this.email)
-                .country(Country.EGYPT)
+                .country(this.country)
                 .birthDate(this.birthDate)
                 .build();
     }
