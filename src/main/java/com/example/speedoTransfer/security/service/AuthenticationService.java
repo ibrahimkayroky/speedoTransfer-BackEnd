@@ -49,7 +49,7 @@ public class AuthenticationService {
                 .password(passwordEncoder.encode(request.getPassword()))
                 .role(Role.USER)
                 .birthDate(request.getBirthDate())
-                .country(Country.EGYPT)
+                .country(request.getCountry())
                 .build();
 
         Account account = Account.builder()

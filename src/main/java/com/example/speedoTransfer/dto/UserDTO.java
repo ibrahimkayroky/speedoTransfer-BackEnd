@@ -1,6 +1,7 @@
 package com.example.speedoTransfer.dto;
 
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.*;
 
 import java.time.LocalDateTime;
@@ -19,12 +20,11 @@ public class UserDTO {
 
     private String email;
 
-    private LocalDateTime createdAt;
-
-    private LocalDateTime updatedAt;
-
     private Double balance;
 
+    private String country;
+
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy")
     private Date birthDate;
 
 }
