@@ -6,13 +6,15 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 
+import java.io.Serializable;
+
 @Setter
 @Getter
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-public class FavoriteRecipient {
+public class FavoriteRecipient implements Serializable{
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

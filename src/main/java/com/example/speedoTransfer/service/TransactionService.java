@@ -12,6 +12,8 @@ import com.example.speedoTransfer.repository.TransactionRepository;
 import com.example.speedoTransfer.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
+import org.springframework.cache.annotation.CacheConfig;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -20,6 +22,7 @@ import java.util.Set;
 
 
 @Service
+@CacheConfig(cacheNames = "transactions")
 @AllArgsConstructor
 public class TransactionService implements ITransactionService{
     private final TransactionRepository transactionRepository;
@@ -77,6 +80,7 @@ public class TransactionService implements ITransactionService{
     ///////neeeeeeed to maintainance
     @Override
     @org.springframework.transaction.annotation.Transactional(readOnly = true)
+    @Cacheable(cacheNames = "transactions")
     public TransactionWithAccountDTO getTransactionById(Long id) {
         TransactionDTO transactionDTO = transactionRepository.findById(id).orElseThrow(null).toDTO();
 //        User senderAccount = userRepository.findByName(transactionDTO.getSenderAccount())

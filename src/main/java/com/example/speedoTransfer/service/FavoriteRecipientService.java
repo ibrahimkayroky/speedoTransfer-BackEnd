@@ -8,6 +8,11 @@ import com.example.speedoTransfer.repository.FavoriteRecipientRepository;
 import com.example.speedoTransfer.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.hibernate.annotations.Cache;
+import org.springframework.cache.annotation.CacheConfig;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.Caching;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
@@ -17,6 +22,7 @@ import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
+@CacheConfig(cacheNames = "recipient")
 public class FavoriteRecipientService implements IFavoriteRecipientService {
 
     private final FavoriteRecipientRepository favoriteRecipientRepository;
@@ -25,6 +31,7 @@ public class FavoriteRecipientService implements IFavoriteRecipientService {
     private final UserRepository userRepository;
     @Override
     @Transactional
+
     public FavoriteRecipientDTO addFavoriteRecipient(FavoriteRecipientDTO favoriteRecipientDTO){
 
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
@@ -43,6 +50,7 @@ public class FavoriteRecipientService implements IFavoriteRecipientService {
     }
 
     @Override
+    @Cacheable(cacheNames = "recipient")
     public FavoriteRecipientDTO getFavoriteRecipientById(Long id) throws FavoriteRecipientNotFoundException {
         FavoriteRecipient favoriteRecipient = favoriteRecipientRepository.findById(id)
                 .orElseThrow(() -> new FavoriteRecipientNotFoundException("FavoriteRecipient not found with id: " + id));
@@ -51,11 +59,13 @@ public class FavoriteRecipientService implements IFavoriteRecipientService {
     }
 
     @Override
+//    @Cacheable(cacheNames = "recipientList")
     public List<FavoriteRecipient> getFavoriteRecipientsByUserId(Long userId) {
         return favoriteRecipientRepository.findByUserId(userId);
     }
 
     @Override
+    @CacheEvict(cacheNames = "recipient")
     public void deleteFavoriteRecipientById(Long id) {
         if (!favoriteRecipientRepository.existsById(id)) {
             throw new IllegalArgumentException("FavoriteRecipient not found");
@@ -65,6 +75,7 @@ public class FavoriteRecipientService implements IFavoriteRecipientService {
     }
 
     @Override
+    @CacheEvict(cacheNames = "recipient")
     public void deleteFavoriteRecipientByUserIdAndDetails(Long id, String recipientAccount) throws FavoriteRecipientNotFoundException {
         Optional<FavoriteRecipient> favoriteRecipientOpt = favoriteRecipientRepository
                 .findByUserIdAndRecipientAccount(id, recipientAccount);

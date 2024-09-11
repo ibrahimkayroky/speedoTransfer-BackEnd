@@ -12,6 +12,8 @@ import com.example.speedoTransfer.model.User;
 import com.example.speedoTransfer.repository.AccountRepository;
 import com.example.speedoTransfer.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.CacheConfig;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -23,6 +25,7 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
+@CacheConfig(cacheNames = "account")
 public class AccountService implements IAccountService {
 
     private final AccountRepository accountRepository;
@@ -50,12 +53,15 @@ public class AccountService implements IAccountService {
     }
 
     @Override
+    @Cacheable()
     public AccountDTO getAccountById(Long accountId) throws AccountNotFoundException {
+        System.out.println("call from DB");
         return this.accountRepository.findById(accountId).orElseThrow(()
                 -> new AccountNotFoundException("Account not found")).toDTO();
     }
 
     @Override
+//    @Cacheable(cacheNames = "transaction")
     public Set<TransactionDTO> getAllTransactions(Long accountId) throws ResourceNotFoundException {
         Account account = accountRepository.findById(accountId)
                 .orElseThrow(() -> new ResourceNotFoundException("Account not found"));

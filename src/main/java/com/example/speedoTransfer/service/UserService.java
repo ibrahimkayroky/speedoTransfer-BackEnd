@@ -8,6 +8,9 @@ import com.example.speedoTransfer.model.FavoriteRecipient;
 import com.example.speedoTransfer.model.User;
 import com.example.speedoTransfer.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.CacheConfig;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -17,6 +20,7 @@ import java.util.function.Consumer;
 
 @Service
 @RequiredArgsConstructor
+@CacheConfig(cacheNames = "user")
 public class UserService implements IUserService {
 
     private final UserRepository userRepository;
@@ -26,6 +30,7 @@ public class UserService implements IUserService {
 
     @Override
     @Transactional(readOnly = true)
+    @Cacheable(cacheNames = "user")
     public UserDTO getUserById(Long userId) throws ResourceNotFoundException {
         return this.userRepository.findById(userId)
                 .orElseThrow(() -> new ResourceNotFoundException("User not found"))
@@ -33,6 +38,7 @@ public class UserService implements IUserService {
     }
 
     @Override
+    @CachePut(cacheNames = "user")
     public UserDTO updateUser(String email, UpdateUserDTO updatedUserDTO) {
         User existingUser = userRepository.findByEmail(email)
                 .orElseThrow(() -> new IllegalArgumentException("User not found"));
@@ -66,6 +72,7 @@ public class UserService implements IUserService {
 
     @Override
     @Transactional(readOnly = true)
+//    @Cacheable(cacheNames = "userRecipientList")
     public Set<FavoriteRecipient> getAllFavoriteRecipients(Long userId) throws FavoriteRecipientException {
         User user = userRepository.findById(userId)
                     .orElseThrow(() -> new FavoriteRecipientException("User has not FavoriteRecipients"));
