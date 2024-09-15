@@ -98,12 +98,6 @@ Maven 3.6+
 PostgreSQL
 Setup
 
-Clone the repository:
-git clone https://github.com/your-username/SpeedoTransfer.git
-
-Navigate to the project directory:
-cd SpeedoTransfer
-
 Install dependencies:
 mvn clean install
 
