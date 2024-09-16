@@ -78,13 +78,6 @@ public class User implements UserDetails {
     @Builder.Default
     private Set<FavoriteRecipient> favoriteRecipients = new HashSet<>();
 
-    public void toRegistrationResponse() {
-        RegisterResponse.builder()
-                .name(this.name)
-                .email(this.email)
-                .build();
-    }
-
 
     public UserDTO toDTO() {
         return UserDTO.builder()
@@ -94,7 +87,6 @@ public class User implements UserDetails {
                 .birthDate(this.birthDate)
                 .country(this.country)
                 .balance(this.account.getBalance())
-//                .balance(this.account.stream().mapToDouble(Account::getBalance).sum())
                 .build();
     }
 

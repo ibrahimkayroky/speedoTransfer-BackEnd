@@ -45,8 +45,4 @@ public class UserController {
         return ResponseEntity.ok().body(userDTO);
     }
 
-//    @GetMapping("/getRecipient")
-//    public Set<FavoriteRecipient> getRecipient(@RequestParam Long userId) throws FavoriteRecipientException {
-//        return userService.getAllFavoriteRecipients(userId);
-//    }
 }
