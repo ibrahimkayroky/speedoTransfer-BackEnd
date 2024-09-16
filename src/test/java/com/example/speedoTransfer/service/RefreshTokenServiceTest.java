@@ -1,5 +1,6 @@
-package com.example.speedoTransfer.security.service;
+package com.example.speedoTransfer.service;
 
+import com.example.speedoTransfer.security.service.RefreshTokenService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.cache.Cache;

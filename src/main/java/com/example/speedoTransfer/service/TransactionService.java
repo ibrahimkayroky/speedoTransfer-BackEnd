@@ -54,13 +54,6 @@ public class TransactionService implements ITransactionService{
 
         System.out.println("Transaction saved successfully with ID1: " + transaction.getId());
 
-        // Add transaction to the account's transaction lists
-//        senderAccount.getSentTransactions().add(transaction);
-//
-//        System.out.println("Transaction saved successfully with ID2: " + transaction.getId());
-//        receiverAccount.getReceivedTransactions().add(transaction);
-
-        // Save the updated accounts
         accountRepository.save(senderAccount);
         accountRepository.save(receiverAccount);
 
@@ -74,20 +67,16 @@ public class TransactionService implements ITransactionService{
 
 
 
-    ///////neeeeeeed to maintainance
     @Override
     @org.springframework.transaction.annotation.Transactional(readOnly = true)
     public TransactionWithAccountDTO getTransactionById(Long id) {
         TransactionDTO transactionDTO = transactionRepository.findById(id).orElseThrow(null).toDTO();
-//        User senderAccount = userRepository.findByName(transactionDTO.getSenderAccount())
-//                .orElseThrow(() -> new IllegalArgumentException("Sender account not found"));
 
         User receiverAccount = userRepository.findByName(transactionDTO.getReceiverName())
                 .orElseThrow(() -> new IllegalArgumentException("Receiver account not found"));
 
         Transaction transaction = Transaction.builder()
                 .id(transactionDTO.getId())
-//                .senderAccount(senderAccount.getAccount())
                 .receiverAccount(receiverAccount.getAccount())
                 .amount(transactionDTO.getAmount())
                 .createdAt(LocalDateTime.now())

@@ -5,7 +5,6 @@ import com.example.speedoTransfer.security.model.AuthenticationResponse;
 import com.example.speedoTransfer.auth.RegisterRequest;
 import com.example.speedoTransfer.enumeration.AccountCurrency;
 import com.example.speedoTransfer.enumeration.AccountType;
-import com.example.speedoTransfer.enumeration.Country;
 import com.example.speedoTransfer.enumeration.Role;
 import com.example.speedoTransfer.exception.custom.UserAlreadyExistsException;
 import com.example.speedoTransfer.model.Account;
@@ -64,11 +63,8 @@ public class AuthenticationService {
 
         user.setAccount(account);
 
-        User savedUser = repository.save(user);
-
         var jwtToken = jwtTokenUtil.generateAccessToken(user);
         var refreshToken = jwtTokenUtil.generateRefreshToken(user);
-//        refreshTokenService.saveToken(refreshToken, user.getId());
 
         AuthenticationResponse response = AuthenticationResponse.builder()
                 .token(jwtToken)

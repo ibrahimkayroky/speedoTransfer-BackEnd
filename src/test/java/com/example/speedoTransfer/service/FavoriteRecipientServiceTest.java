@@ -58,17 +58,14 @@ public class FavoriteRecipientServiceTest {
         when(userRepository.findByEmail(email)).thenReturn(Optional.of(user));
         when(favoriteRecipientRepository.save(any(FavoriteRecipient.class))).thenReturn(favoriteRecipient);
 
-        // Mock Security Context
         Authentication authentication = mock(Authentication.class);
         when(authentication.getName()).thenReturn(email);
         SecurityContext securityContext = mock(SecurityContext.class);
         when(securityContext.getAuthentication()).thenReturn(authentication);
         SecurityContextHolder.setContext(securityContext);
 
-        // Execute
         FavoriteRecipientDTO result = favoriteRecipientService.addFavoriteRecipient(favoriteRecipientDTO);
 
-        // Verify
         assertNotNull(result);
         assertEquals(favoriteRecipientDTO.getRecipientName(), result.getRecipientName());
         assertEquals(favoriteRecipientDTO.getRecipientAccount(), result.getRecipientAccount());
@@ -80,7 +77,6 @@ public class FavoriteRecipientServiceTest {
 
     @Test
     void testGetFavoriteRecipientById_NotFound() {
-        // Setup
         Long id = 1L;
         when(favoriteRecipientRepository.findById(id)).thenReturn(Optional.empty());
 
@@ -93,24 +89,19 @@ public class FavoriteRecipientServiceTest {
 
 @Test
 void testDeleteFavoriteRecipientById_Success() {
-    // Setup
     Long id = 1L;
     when(favoriteRecipientRepository.existsById(id)).thenReturn(true);
 
-    // Execute
     favoriteRecipientService.deleteFavoriteRecipientById(id);
 
-    // Verify
     verify(favoriteRecipientRepository, times(1)).deleteById(id);
 }
 
 @Test
 void testDeleteFavoriteRecipientById_NotFound() {
-    // Setup
     Long id = 1L;
     when(favoriteRecipientRepository.existsById(id)).thenReturn(false);
 
-    // Execute & Verify
     IllegalArgumentException thrown = assertThrows(IllegalArgumentException.class, () -> {
         favoriteRecipientService.deleteFavoriteRecipientById(id);
     });
@@ -120,7 +111,6 @@ void testDeleteFavoriteRecipientById_NotFound() {
 
 @Test
 void testDeleteFavoriteRecipientByUserIdAndDetails_Success() throws FavoriteRecipientNotFoundException {
-    // Setup
     Long userId = 1L;
     String recipientAccount = "123456789";
 
@@ -131,23 +121,19 @@ void testDeleteFavoriteRecipientByUserIdAndDetails_Success() throws FavoriteReci
     when(favoriteRecipientRepository.findByUserIdAndRecipientAccount(userId, recipientAccount))
             .thenReturn(Optional.of(favoriteRecipient));
 
-    // Execute
     favoriteRecipientService.deleteFavoriteRecipientByUserIdAndDetails(userId, recipientAccount);
 
-    // Verify
     verify(favoriteRecipientRepository, times(1)).delete(favoriteRecipient);
 }
 
 @Test
 void testDeleteFavoriteRecipientByUserIdAndDetails_NotFound() {
-    // Setup
     Long userId = 1L;
     String recipientAccount = "123456789";
 
     when(favoriteRecipientRepository.findByUserIdAndRecipientAccount(userId, recipientAccount))
             .thenReturn(Optional.empty());
 
-    // Execute & Verify
     FavoriteRecipientNotFoundException thrown = assertThrows(FavoriteRecipientNotFoundException.class, () -> {
         favoriteRecipientService.deleteFavoriteRecipientByUserIdAndDetails(userId, recipientAccount);
     });

@@ -27,18 +27,5 @@ public class TransactionController {
         return transactionService.Transfer(transactionTransferDTO,user.getId());
     }
 
-//    @GetMapping("/{transactionid}")
-//    public TransactionWithAccountDTO getTransactionById(@PathVariable Long transactionid) {
-//        return this.transactionService.getTransactionById(transactionid);
-//    }
-//    @GetMapping("/getAllTransactions")
-//    public List<TransactionWithAccountDTO> getTransactionByAccountId()throws ResourceNotFoundException {
-//        String email = SecurityContextHolder.getContext().getAuthentication().getName();
-//        User user = userRepository.findByEmail(email)
-//                .orElseThrow(() -> new ResourceNotFoundException("User not found with email: " + email));
-//        List<Transaction> transactions = transactionRepository.findBySenderAccountId(user.getId());
-//        return transactions.stream()
-//                .map(Transaction::toDTOWithAccount)
-//                .collect(Collectors.toList());
-//    }
+
 }

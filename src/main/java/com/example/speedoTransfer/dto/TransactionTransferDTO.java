@@ -11,11 +11,7 @@ import lombok.*;
 public class TransactionTransferDTO {
     private Long id;
 
-//    @NotBlank(message = "Receiver name is required")
     private String receiverName;
-
-//    @NotBlank(message = "Receiver account is required")
-//    @Email
     private String receiverAccount;
     private TransactionStatus status;
     private Double amount;

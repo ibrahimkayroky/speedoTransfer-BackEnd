@@ -103,9 +103,7 @@ public class UserServiceTest {
 
         when(userRepository.findByEmail(email)).thenReturn(Optional.empty());
 
-        assertThrows(ResourceNotFoundException.class, () -> {
-            userService.updateUser(email, updateUserDTO);
-        });
+        assertThrows(ResourceNotFoundException.class, () -> userService.updateUser(email, updateUserDTO));
         verify(userRepository,times(1)).findByEmail(email);
 
     }
