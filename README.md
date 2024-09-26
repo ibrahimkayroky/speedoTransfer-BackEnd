@@ -105,8 +105,8 @@ Configure the database settings in application.yml:
 spring:
   datasource:
     url: jdbc:postgresql://localhost:5432/speedotransfer
-    username: your_db_username
-    password: your_db_password
+    username: postgres
+    password: 3006
 
 Run the application:
 mvn spring-boot:run
